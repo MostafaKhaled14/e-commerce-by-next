@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+// import Image from "next/image";
 import { useState } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
 
@@ -9,7 +9,7 @@ type ProductCardProps = {
   name: string;
   category: string;
   price: number;
-  image: string;
+  // image: string;
   rating: number;
   reviewsCount: number;
   isWishlisted?: boolean;
@@ -20,7 +20,7 @@ export default function ProductCard({
   name,
   category,
   price,
-  image,
+  // image,
   rating,
   reviewsCount,
   isWishlisted = false,
