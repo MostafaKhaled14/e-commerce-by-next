@@ -1,0 +1,71 @@
+import ProductCard from "../productCard/page";
+
+const products = [
+  {
+    name: "Smart Watch X1",
+    category: "Electronics",
+    price: 129.99,
+    image: "/prod1.jpg",
+    rating: 4,
+    reviewsCount: 58,
+    isWishlisted: true,
+  },
+  {
+    name: "Leather Shoes",
+    category: "Fashion",
+    price: 89.5,
+    image: "/prod2.jpg",
+    rating: 3,
+    reviewsCount: 23,
+    isWishlisted: false,
+  },
+  {
+    name: "Leather Shoes",
+    category: "Fashion",
+    price: 89.5,
+    image: "/prod2.jpg",
+    rating: 3,
+    reviewsCount: 23,
+    isWishlisted: false,
+  },
+  {
+    name: "Leather Shoes",
+    category: "Fashion",
+    price: 89.5,
+    image: "/prod2.jpg",
+    rating: 3,
+    reviewsCount: 23,
+    isWishlisted: false,
+  },
+  {
+    name: "Leather Shoes",
+    category: "Fashion",
+    price: 89.5,
+    image: "/prod2.jpg",
+    rating: 3,
+    reviewsCount: 23,
+    isWishlisted: false,
+  },
+  {
+    name: "Leather Shoes",
+    category: "Fashion",
+    price: 89.5,
+    image: "/prod2.jpg",
+    rating: 3,
+    reviewsCount: 23,
+    isWishlisted: false,
+  },
+];
+
+export default function FeaturedProducts() {
+  return (
+    <section className="mt-20">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product, i) => (
+          <ProductCard key={i} {...product} />
+        ))}
+      </div>
+    </section>
+  );
+}
