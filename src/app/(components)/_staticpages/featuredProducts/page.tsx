@@ -1,7 +1,8 @@
-import ProductCard from "../productCard/page";
+// import ProductCard from "../productCard/page";
 
 const products = [
   {
+    id:1,
     name: "Smart Watch X1",
     category: "Electronics",
     price: 129.99,
@@ -11,6 +12,7 @@ const products = [
     isWishlisted: true,
   },
   {
+    id:2,
     name: "Leather Shoes",
     category: "Fashion",
     price: 89.5,
@@ -20,6 +22,7 @@ const products = [
     isWishlisted: false,
   },
   {
+    id:3,
     name: "Leather Shoes",
     category: "Fashion",
     price: 89.5,
@@ -29,6 +32,7 @@ const products = [
     isWishlisted: false,
   },
   {
+    id:4,
     name: "Leather Shoes",
     category: "Fashion",
     price: 89.5,
@@ -38,6 +42,7 @@ const products = [
     isWishlisted: false,
   },
   {
+    id:5,
     name: "Leather Shoes",
     category: "Fashion",
     price: 89.5,
@@ -47,6 +52,7 @@ const products = [
     isWishlisted: false,
   },
   {
+    id:6,
     name: "Leather Shoes",
     category: "Fashion",
     price: 89.5,
@@ -62,8 +68,9 @@ export default function FeaturedProducts() {
     <section className="mt-20">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product, i) => (
-          <ProductCard key={i} {...product} />
+        {products.map((product) => (
+          // <ProductCard key={i} {...product} />
+          <h2 key={product.id}>hi</h2>
         ))}
       </div>
     </section>
