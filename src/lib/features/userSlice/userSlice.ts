@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
-export const verifyToken = createAsyncThunk("user/verifyToken", async (_, thunkAPI) => {
-  const token = localStorage.getItem("token");
+export const verifyToken = createAsyncThunk("user/verifyToken", async (token: string, thunkAPI) => {
   if (!token) return thunkAPI.rejectWithValue("No token found");
 
   try {
@@ -18,7 +17,6 @@ export const verifyToken = createAsyncThunk("user/verifyToken", async (_, thunkA
   } catch {
     return thunkAPI.rejectWithValue('Invalid or expired token. "Please login again"');
   }
-  
 });
 
 export const fetchUserData = createAsyncThunk("user/fetchUserData", async ({ userId }: { userId: string }, thunkAPI) => {
@@ -32,9 +30,17 @@ export const fetchUserData = createAsyncThunk("user/fetchUserData", async ({ use
 
 export const changePasswordThunk = createAsyncThunk(
   "user/changePasswordThunk",
-  async (values: { currentPassword: string; password: string; rePassword: string }, thunkAPI) => {
+  async (
+    {
+      values,
+      token,
+    }: {
+      values: { currentPassword: string; password: string; rePassword: string };
+      token: string;
+    },
+    thunkAPI
+  ) => {
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.put("https://ecommerce.routemisr.com/api/v1/users/changeMyPassword", values, {
         headers: { token: token || "" },
       });

@@ -30,7 +30,10 @@ export default function ChangePassword() {
         .required("Confirm your new password"),
     }),
     onSubmit: (values) => {
-      dispatch(changePasswordThunk(values));
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+      if (token) {
+        dispatch(changePasswordThunk({ values, token }));
+      }
     },
   });
 

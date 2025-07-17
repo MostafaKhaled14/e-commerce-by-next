@@ -2,68 +2,19 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import axios, { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-// import ProtectedRoute from "@/app/_protectedroute/Protectedroute";
-// import { cookies } from "next/headers";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk } from "@/lib/features/authSlice/authSlice";
 import { AppDispatch, RootState } from "@/lib/store";
 import InputField from "../../_staticpages/inputfield/page";
-// import { RootState } from "@reduxjs/toolkit/query";
-
-// type LoginFormValues = {
-//   email: string;
-//   password: string;
-// };
-
-// type InputFieldProps = {
-//   label: string;
-//   name: string;
-//   type?: string;
-//   formik: FormikProps<LoginFormValues>;
-// };
-
-// function InputField({ label, name, type = "text", formik }: InputFieldProps) {
-//   return (
-//     // <ProtectedRoute>
-
-//     <div>
-//       <label className="block text-gray-700 font-medium mb-1">{label}</label>
-//       <input
-//         type={type}
-//         name={name}
-//         placeholder={`Enter your ${name}`}
-//         onChange={formik.handleChange}
-//         onBlur={formik.handleBlur}
-//         value={formik.values[name as keyof LoginFormValues]}
-//         className="w-full border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//       />
-//       {formik.touched[name as keyof LoginFormValues] && formik.errors[name as keyof LoginFormValues] && (
-//         <p className="text-sm text-red-500 mt-1">{formik.errors[name as keyof LoginFormValues]}</p>
-//       )}
-//     </div>
-//     // </ProtectedRoute>
-//   );
-// }
 
 export default function LoginPage() {
-  // const [message, setMessage] = useState("");
-  // const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const dispatch = useDispatch<AppDispatch>();
-  const token = localStorage.getItem("token");
-  const { loading , loginMessage } = useSelector((state: RootState) => state.auth);
-  // const loginMessage = useSelector((state: RootState) => state.auth.loginMessage);
-  // const loading = useSelector((state: RootState) => state.auth.loading);
-  // const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  // localStorage.setItem("token", token ?? "");
-  // console.log(localStorage.getItem("token"));
-
-
+  const { loading, loginMessage } = useSelector((state: RootState) => state.auth);
 
   const formik = useFormik({
     initialValues: {
@@ -80,10 +31,11 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
       router.push("/");
     }
-  }, [token, router]);
+  }, [router]);
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-100 flex items-center justify-center px-0 sm:px-4">
@@ -96,7 +48,6 @@ export default function LoginPage() {
 
           {/* Password */}
           <InputField label="Password" name="password" type="password" formik={formik} />
-          {/* Email */}
 
           {/* Submit Button */}
           <button
@@ -128,7 +79,9 @@ export default function LoginPage() {
 
           {/* Message */}
           {loginMessage && (
-            <p className={`${loginMessage.includes("success") ? "text-green-500" : "text-red-500"} mb-4 text-center text-sm font-medium`}>{loginMessage}</p>
+            <p className={`${loginMessage.includes("success") ? "text-green-500" : "text-red-500"} mb-4 text-center text-sm font-medium`}>
+              {loginMessage}
+            </p>
           )}
         </form>
       </div>

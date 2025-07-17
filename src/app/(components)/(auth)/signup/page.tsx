@@ -16,7 +16,8 @@ export default function SignUp() {
   const { loading, signupMessage, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    const token = localStorage.getItem("token");
+    if (token) {
       router.push("/");
     }
     if (isAuthenticated) {

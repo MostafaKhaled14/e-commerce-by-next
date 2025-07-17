@@ -14,14 +14,17 @@ export default function MyAccount() {
   const { userData, loading, error } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    dispatch(verifyToken())
-      .unwrap()
-      .then(({ userId }: { userId: string }) => {
-        dispatch(fetchUserData({ userId }));
-      })
-      .catch(() => {
-        router.push("/login");
-      });
+    const token = localStorage.getItem("token");
+    if (token) {
+      dispatch(verifyToken(token))
+        .unwrap()
+        .then(({ userId }: { userId: string }) => {
+          dispatch(fetchUserData({ userId }));
+        })
+        .catch(() => {
+          router.push("/login");
+        });
+    }
   }, [dispatch, router]);
 
   // if (loading) return <p>Loading...</p>;

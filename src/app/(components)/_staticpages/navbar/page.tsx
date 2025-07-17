@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingCart, User, Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/lib/features/authSlice/authSlice";
@@ -11,12 +11,11 @@ import { AppDispatch } from "@/lib/store";
 export default function Navbar() {
   const [cartCount, setCartCount] = useState(3);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const pathName = usePathname();
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
-
-  // console.log(pathname);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -26,6 +25,26 @@ export default function Navbar() {
     { href: "/products", label: "Products" },
     { href: "/brands", label: "Brands" },
   ];
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
+
+  const handleLogoutOrRedirect = () => {
+    if (token) {
+      dispatch(logout());
+      localStorage.removeItem("token");
+      setToken(null);
+      router.push("/login");
+    } else {
+      if (pathname === "/login") {
+        router.push("/signup");
+      } else {
+        router.push("/login");
+      }
+    }
+  };
 
   return (
     <>
@@ -56,16 +75,9 @@ export default function Navbar() {
 
           {/* Account & Logout */}
           <div className="hidden min-[930px]:flex items-center gap-2 cursor-pointer">
-            {localStorage.getItem("token") && <User onClick={() => router.push("/account")} className="w-6 h-6 text-blue-600" />}
-            <div
-              onClick={() => (
-                dispatch(logout()),
-                localStorage.removeItem("token"),
-                router.push(`${localStorage.getItem("token") ? "/login" : pathname == "/login" ? "/signup" : "/login"}`)
-              )}
-              className="bg-blue-600 text-white rounded-full px-3 py-1 hover:bg-blue-500 duration-150"
-            >
-              <span>{localStorage.getItem("token") ? "Logout" : pathname == "/login" ? "SignUp" : "Login"}</span>
+            {token && <User onClick={() => router.push("/account")} className="w-6 h-6 text-blue-600" />}
+            <div onClick={handleLogoutOrRedirect} className="bg-blue-600 text-white rounded-full px-3 py-1 hover:bg-blue-500 duration-150">
+              <span>{token ? "Logout" : pathname === "/login" ? "SignUp" : "Login"}</span>
             </div>
           </div>
 

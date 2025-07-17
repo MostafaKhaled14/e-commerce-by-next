@@ -4,7 +4,6 @@ import axios, { AxiosError } from "axios";
 export const loginThunk = createAsyncThunk("auth/login", async (values: { email: string; password: string }, thunkAPI) => {
   try {
     const { data } = await axios.post("https://ecommerce.routemisr.com/api/v1/auth/signin", values);
-    localStorage.setItem("token", data.token);
     return data;
   } catch (err) {
     const error = err as AxiosError<{ message: string }>;
@@ -74,7 +73,9 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(loginThunk.fulfilled, (state, action) => {
-        
+        if (typeof window !== "undefined") {
+          localStorage.setItem("token", action.payload.token);
+        }
         state.loginMessage = action.payload.message || null;
         state.loading = false;
         state.user = action.payload.user || null;

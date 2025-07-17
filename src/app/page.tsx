@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Slider from "./(components)/_staticpages/slider/page";
 import CategorySlider from "./(components)/_staticpages/categorySlider/page";
-// import FeaturedProducts from "./(components)/_staticpages/featuredProducts/page";
 import Products from "./(components)/products/page";
 
 export default function Home() {
