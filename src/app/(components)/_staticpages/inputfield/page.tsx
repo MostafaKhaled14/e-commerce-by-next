@@ -14,7 +14,7 @@ export default function InputField<T>({ label, name, type = "text", formik }: In
       <input
         type={type}
         name={name as string}
-        placeholder={`Enter your ${String(name)}`}
+        placeholder={`Enter ${String(name)}`}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         value={String(formik.values[name] ?? "")}

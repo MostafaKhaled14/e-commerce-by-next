@@ -1,25 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
-export const verifyToken = createAsyncThunk("user/verifyToken", async (token: string, thunkAPI) => {
+export const verifyTokenThunk = createAsyncThunk("user/verifyTokenThunk", async (token: string, thunkAPI) => {
   if (!token) return thunkAPI.rejectWithValue("No token found");
-
   try {
     const response = await axios.get("https://ecommerce.routemisr.com/api/v1/auth/verifyToken", {
       headers: { token: token || "" },
     });
-    if (response.data.message === "verified") {
-      const userId = response.data.decoded.id;
-      return { userId };
-    } else {
-      throw new Error("Invalid token");
-    }
+    const userId = response.data.decoded.id;
+    return { userId };
   } catch {
     return thunkAPI.rejectWithValue('Invalid or expired token. "Please login again"');
   }
 });
 
-export const fetchUserData = createAsyncThunk("user/fetchUserData", async ({ userId }: { userId: string }, thunkAPI) => {
+export const fetchUserDataThunk = createAsyncThunk("user/fetchUserDataThunk", async ({ userId }: { userId: string }, thunkAPI) => {
   try {
     const { data } = await axios.get(`https://ecommerce.routemisr.com/api/v1/users/${userId}`);
     return data;
@@ -46,36 +42,66 @@ export const changePasswordThunk = createAsyncThunk(
       });
       return response.data;
     } catch (err) {
-      const axiosError = err as AxiosError<{ message: string }>;
-      if (axiosError.response?.data?.message === "fail") {
-        const error = err as AxiosError<{ errors: { msg: string } }>;
-        return thunkAPI.rejectWithValue(error.response?.data?.errors?.msg || "Something went wrong");
+      const error = err as AxiosError<{ errors: { msg: string }; message: string }>;
+      if (error?.response?.data?.message === "User recently changed password! Please login again.") {
+        return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      } else if (error?.response?.data?.errors?.msg === "Incorrect current password") {
+        return thunkAPI.rejectWithValue(error?.response?.data?.errors?.msg);
       } else {
-        const error = err as AxiosError<{ message: string }>;
-        return thunkAPI.rejectWithValue(error.response?.data?.message || "Something went wrong");
+        return thunkAPI.rejectWithValue("Failed to change password");
       }
     }
   }
 );
 
+export const updateProfileThunk = createAsyncThunk(
+  "user/updateProfileThunk",
+  async (values: { name: string; email: string; phone: string }, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
+      const { data } = await axios.put("https://ecommerce.routemisr.com/api/v1/users/updateMe/", values, {
+        headers: { token },
+      });
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<{ errors: { msg: string }; message: string }>;
+      if (error?.response?.data?.message === "User recently changed password! Please login again.") {
+        return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      } else if (error?.response?.data?.errors?.msg === "E-mail already in use") {
+        return thunkAPI.rejectWithValue(error?.response?.data?.errors?.msg);
+      } else {
+        return thunkAPI.rejectWithValue("Failed to edit profile");
+      }
+    }
+  }
+);
+
+export type AddressProps = {
+  _id: string;
+  name: string;
+  details: string;
+  phone: string;
+  city: string;
+};
+
 type AuthState = {
-  error: string | null;
+  errorMessage: string | null;
   passwordIsChanged: boolean;
-  successMessage?: string | null;
+  profileIsUpdated: boolean;
   loading: boolean;
   userData: {
     name: string;
     email: string;
     phone: string;
-    addresses: string[];
+    addresses: AddressProps[] | [];
   } | null;
 };
 
 const initialState: AuthState = {
-  error: null,
-  passwordIsChanged: false,
-  successMessage: null,
   loading: false,
+  passwordIsChanged: false,
+  profileIsUpdated: false,
+  errorMessage: null,
   userData: null,
 };
 
@@ -83,57 +109,65 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout: (state) => {
-      state.error = null;
+    resetChanges: (state) => {
       state.passwordIsChanged = false;
-      state.successMessage = null;
-      state.loading = false;
-      state.userData = null;
+      state.profileIsUpdated = false;
+      state.errorMessage = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(verifyToken.pending, (state) => {
+      .addCase(verifyTokenThunk.pending, (state) => {
         state.loading = true;
       })
-      .addCase(verifyToken.fulfilled, (state) => {
+      .addCase(verifyTokenThunk.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(verifyToken.rejected, (state, action) => {
+      .addCase(verifyTokenThunk.rejected, (state) => {
         state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(fetchUserData.pending, (state) => {
+      });
+    builder
+      .addCase(fetchUserDataThunk.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchUserData.fulfilled, (state, action) => {
+      .addCase(fetchUserDataThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.userData = action.payload.data;
       })
-      .addCase(fetchUserData.rejected, (state, action) => {
+      .addCase(fetchUserDataThunk.rejected, (state) => {
         state.loading = false;
-        state.error = action.payload as string;
       });
     builder
       .addCase(changePasswordThunk.pending, (state) => {
         state.loading = true;
-        state.passwordIsChanged = false;
-        state.successMessage = null;
       })
-      .addCase(changePasswordThunk.fulfilled, (state, action) => {
+      .addCase(changePasswordThunk.fulfilled, (state) => {
         state.loading = false;
-        state.successMessage = "Password changed successfully";
-        if (action.payload.message === "success") {
-          state.passwordIsChanged = true;
-        }
+        toast.success("Password changed successfully");
+        state.passwordIsChanged = true;
       })
       .addCase(changePasswordThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.errorMessage = action.payload as string;
         state.passwordIsChanged = false;
+      });
+    builder
+      .addCase(updateProfileThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateProfileThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userData = action.payload.user;
+        toast.success("Profile updated successfully");
+        state.profileIsUpdated = true;
+      })
+      .addCase(updateProfileThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.profileIsUpdated = false;
+        state.errorMessage = action.payload as string;
       });
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { resetChanges } = userSlice.actions;
 export default userSlice.reducer;

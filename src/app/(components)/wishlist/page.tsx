@@ -1,5 +1,3 @@
-
-
 import ProductCard from "../_staticpages/productCard/page";
 
 const wishlistProducts = [
@@ -29,7 +27,6 @@ export default function Wishlist() {
   return (
     <section className="px-6 md:px-16 py-10">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Wishlist</h2>
-
       {wishlistProducts.length === 0 ? (
         <p className="text-gray-500">Your wishlist is empty.</p>
       ) : (

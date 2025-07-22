@@ -14,31 +14,11 @@ export default function Home() {
           Shop Now
         </Link>
       </section>
-      
       <Slider />
-
       {/* Categories Section */}
-        
       <CategorySlider />
-
       {/* Featured Products Section */}
-      {/* <section className="mt-20">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="border p-4 rounded-lg shadow hover:shadow-lg transition">
-              <div className="h-40 bg-gray-200 mb-4 rounded"></div>
-              <h4 className="font-semibold text-gray-700 mb-2">Product {item}</h4>
-              <p className="text-gray-500 text-sm mb-2">Short description...</p>
-              <span className="text-blue-600 font-bold">$99.99</span>
-            </div>
-          ))}
-        </div>
-      </section> */}
-      {/* <FeaturedProducts /> */}
-      
-        <Products />
-      
+      <Products />
     </main>
   );
 }
