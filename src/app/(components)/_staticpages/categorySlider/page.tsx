@@ -9,23 +9,20 @@ import { FreeMode } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper as SwiperType } from "swiper/types";
 
-const categories = [
-  { name: "Clothes", img: "/cat1.jpg" },
-  { name: "Electronics", img: "/cat2.jpg" },
-  { name: "Shoes", img: "/cat3.jpg" },
-  { name: "Watches", img: "/cat4.jpg" },
-  { name: "Toys", img: "/cat5.jpg" },
-  { name: "Furniture", img: "/cat6.jpg" },
-];
-
 export default function CategorySlider() {
   const swiperRef = useRef<SwiperType | null>(null);
+  const categories = [
+    { name: "Clothes", img: "/cat1.jpg" },
+    { name: "Electronics", img: "/cat2.jpg" },
+    { name: "Shoes", img: "/cat3.jpg" },
+    { name: "Watches", img: "/cat4.jpg" },
+    { name: "Toys", img: "/cat5.jpg" },
+    { name: "Furniture", img: "/cat6.jpg" },
+  ];
 
   return (
     <section className="w-full py-4 relative">
       <h2 className="text-xl font-bold mb-4 text-gray-800">Categories</h2>
-
-      {/* Wrapper to hold arrows and slider in row */}
       <div className="relative flex items-center">
         {/* Left Button */}
         <button
@@ -34,14 +31,13 @@ export default function CategorySlider() {
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
-
         {/* Slider */}
         <Swiper
           modules={[FreeMode]}
           freeMode
           spaceBetween={16}
           slidesPerView="auto"
-          className="w-full px-8" // padding to leave space for arrows
+          className="w-full px-8"
           onSwiper={(swiper) => (swiperRef.current = swiper)}
         >
           {categories.map((cat, i) => (
@@ -53,7 +49,6 @@ export default function CategorySlider() {
             </SwiperSlide>
           ))}
         </Swiper>
-
         {/* Right Button */}
         <button
           onClick={() => swiperRef.current?.slideNext()}

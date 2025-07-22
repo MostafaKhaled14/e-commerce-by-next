@@ -13,17 +13,17 @@ import InputField from "../../_staticpages/inputfield/page";
 export default function SignUp() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, signupMessage, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { loading, errorMessage, isRegested } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       router.push("/");
     }
-    if (isAuthenticated) {
+    if (isRegested) {
       router.push("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isRegested, router]);
 
   const formik = useFormik({
     initialValues: {
@@ -38,7 +38,7 @@ export default function SignUp() {
       email: Yup.string().email("Invalid email").required("Email is required"),
       password: Yup.string()
         .min(8, "Minimum 8 characters")
-        .matches(/^[A-Z][a-z0-9@]{7,}$/, "Start with capital & min 8 chars")
+        .matches(/^[A-Z].{7,}$/, "Start with capital & min 8 chars")
         .required("Password is required"),
       rePassword: Yup.string()
         .oneOf([Yup.ref("password")], "Passwords do not match")
@@ -56,41 +56,30 @@ export default function SignUp() {
     <section className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-100 flex items-center justify-center px-0 sm:px-4">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 mx-6">
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Create Account</h2>
-
         <form onSubmit={formik.handleSubmit} className="space-y-2">
           {/* Name */}
           <InputField label="Name" name="name" formik={formik} />
-
           {/* Email */}
           <InputField label="Email" name="email" type="email" formik={formik} />
-
           {/* Password */}
           <InputField label="Password" name="password" type="password" formik={formik} />
-
           {/* Confirm Password */}
           <InputField label="Confirm Password" name="rePassword" type="password" formik={formik} />
-
           {/* Phone */}
           <InputField label="Phone" name="phone" formik={formik} />
-
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 mt-5 rounded-lg text-lg font-semibold transition duration-200 ${
-              loading ? "bg-blue-400 cursor-not-allowed" : "hover:bg-blue-500"
+            className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white py-2 my-6 rounded-lg text-lg font-semibold hover:shadow-lg cursor-pointer duration-150 ${
+              loading ? "pointer-events-none blur-xs animate-pulse" : ""
             }`}
           >
             {loading && <Loader2 className="animate-spin w-5 h-5" />}
             Sign Up
           </button>
-
-          {/* Message */}
-          {signupMessage && (
-            <p className={`${signupMessage === "success" ? "text-green-500" : "text-red-500"} mb-4 text-center text-sm font-medium`}>
-              {signupMessage}
-            </p>
-          )}
+          {/* Error Message */}
+          <div className="text-center">{errorMessage && <p className="text-red-500">{errorMessage}</p>}</div>
         </form>
       </div>
     </section>
